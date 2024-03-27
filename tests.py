@@ -10,7 +10,7 @@ class TestBooksCollector:
         collector = BooksCollector()
         collector.add_new_book('Гордость и предубеждение')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
-        assert len(collector.books_genre) == 2
+        assert collector.get_books_genre() == {'Гордость и предубеждение' : '', 'Что делать, если ваш кот хочет вас убить' : ''}
 
 
     def test_add_new_book_add_the_same_book(self):
@@ -18,30 +18,31 @@ class TestBooksCollector:
         collector.add_new_book('Гордость и предубеждение')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
-        assert len(collector.books_genre) == 2
+        assert collector.get_books_genre() == {'Гордость и предубеждение' : '', 'Что делать, если ваш кот хочет вас убить' : ''}
 
     def test_add_new_book_add_book_with_long_name(self):
         collector = BooksCollector()
         collector.add_new_book('Гордость и предубеждение')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить Что делать, если ваш кот хочет вас убить')
-        assert len(collector.books_genre) == 2
+        assert collector.get_books_genre() == {'Гордость и предубеждение' : '', 'Что делать, если ваш кот хочет вас убить' : ''}
 
     def test_set_book_genre_add_two_genres(self):
         collector = BooksCollector()
-        collector.add_new_book('Гордость и предубеждение и зомби')
+        collector.add_new_book('Гордость и предубеждение')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
-        collector.set_book_genre('Гордость и предубеждение и зомби','Фантастика')
+        collector.set_book_genre('Гордость и предубеждение','Фантастика')
         collector.set_book_genre('Что делать, если ваш кот хочет вас убить','Ужасы')
-        assert list(collector.books_genre.values()) == ['Фантастика', 'Ужасы']
+        assert collector.get_books_genre() == {'Гордость и предубеждение' : 'Фантастика', 'Что делать, если ваш кот хочет вас убить' : 'Ужасы'}
 
     def test_set_book_genre_no_genre_dont_added(self):
         collector = BooksCollector()
-        collector.add_new_book('Гордость и предубеждение и зомби')
+        collector.add_new_book('Гордость и предубеждение')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
-        collector.set_book_genre('Гордость и предубеждение и зомби','Фантастика')
+        collector.set_book_genre('Гордость и предубеждение','Фантастика')
         collector.set_book_genre('Что делать, если ваш кот хочет вас убить','Боевик')
-        assert list(collector.books_genre.values()) == ['Фантастика', '']
+        assert collector.get_books_genre() == {'Гордость и предубеждение' : 'Фантастика', 'Что делать, если ваш кот хочет вас убить' : ''}
+
 
 
     def test_get_book_genre_correct_book_name(self):
@@ -62,6 +63,14 @@ class TestBooksCollector:
         collector.set_book_genre('Horror night', 'Ужасы')
         assert collector.get_books_with_specific_genre('Ужасы') == ['Что делать, если ваш кот хочет вас убить', 'Horror night']
 
+    def test_get_books_for_children(self):
+        collector = BooksCollector()
+        collector.add_new_book('Гордость и предубеждение и зомби')
+        collector.add_new_book('Что делать, если ваш кот хочет вас убить')
+        collector.set_book_genre('Гордость и предубеждение и зомби','Фантастика')
+        collector.set_book_genre('Что делать, если ваш кот хочет вас убить','Ужасы')
+        assert collector.get_books_for_children() == ['Гордость и предубеждение и зомби']
+
     def test_get_books_for_children_horror_is_not_in_list(self):
         collector = BooksCollector()
         collector.add_new_book('Гордость и предубеждение и зомби')
@@ -77,8 +86,6 @@ class TestBooksCollector:
         collector.add_new_book('Гордость и предубеждение и зомби')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
         collector.add_new_book('Великий Гэтсби')
-        collector.set_book_genre('Гордость и предубеждение и зомби', 'Фантастика')
-        collector.set_book_genre('Что делать, если ваш кот хочет вас убить', 'Ужасы')
         collector.add_book_in_favorites('Гордость и предубеждение и зомби')
         collector.add_book_in_favorites('Что делать, если ваш кот хочет вас убить')
         collector.add_book_in_favorites('Великий Гэтсби')
@@ -89,8 +96,6 @@ class TestBooksCollector:
         collector.add_new_book('Гордость и предубеждение и зомби')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
         collector.add_new_book('Великий Гэтсби')
-        collector.set_book_genre('Гордость и предубеждение и зомби', 'Фантастика')
-        collector.set_book_genre('Что делать, если ваш кот хочет вас убить', 'Ужасы')
         collector.add_book_in_favorites('Гордость и предубеждение и зомби')
         collector.add_book_in_favorites('Что делать, если ваш кот хочет вас убить')
         collector.add_book_in_favorites('Великий Гэтсби')
@@ -102,10 +107,8 @@ class TestBooksCollector:
         collector.add_new_book('Гордость и предубеждение и зомби')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
         collector.add_new_book('Великий Гэтсби')
-        collector.set_book_genre('Гордость и предубеждение и зомби', 'Фантастика')
-        collector.set_book_genre('Что делать, если ваш кот хочет вас убить', 'Ужасы')
         collector.add_book_in_favorites('Гордость и предубеждение и зомби')
         collector.add_book_in_favorites('Что делать, если ваш кот хочет вас убить')
         collector.add_book_in_favorites('Великий Гэтсби')
         collector.delete_book_from_favorites('Великий Гэтсби')
-        assert collector.favorites == ['Гордость и предубеждение и зомби', 'Что делать, если ваш кот хочет вас убить']
+        assert collector.get_list_of_favorites_books() == ['Гордость и предубеждение и зомби', 'Что делать, если ваш кот хочет вас убить']
